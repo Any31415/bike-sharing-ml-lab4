@@ -15,7 +15,21 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
+      - name: Install DVC
+        run: |
+          pip install "dvc[gdrive]"
+          pip install "pyOpenSSL==24.2.1"
+
+      - name: Pull data and model from DVC
+        run: |
+          echo '${{ secrets.GDRIVE_CREDENTIALS_DATA }}' > gdrive-credentials.json
+          dvc remote modify storage --local gdrive_service_account_json_file_path gdrive-credentials.json
+          dvc pull
       - name: Create .env for docker-compose
         run: |
           echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
