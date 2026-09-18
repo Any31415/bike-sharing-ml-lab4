@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from src.predict import load_model, predict
-from src.db import save_prediction
-from src.kafka_producer import producer
+from src.kafka_producer import get_producer
 
 app = FastAPI(title="Bike Sharing Prediction API")
 model = load_model()
@@ -29,5 +28,5 @@ def health_check():
 @app.post("/predict")
 def get_prediction(features: BikeFeatures):
     result = predict(model, features.model_dump())
-    producer.send("predictions", value={"input": features.model_dump(), "result": result})  # вместо save_prediction
+    get_producer().send("predictions", value={"input": features.model_dump(), "result": result})
     return {"predicted_count": result}
