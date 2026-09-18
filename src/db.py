@@ -45,5 +45,4 @@ def save_prediction(features: dict, predicted_count: float):
     finally:
         session.close()
 
-# создаём таблицы при импорте модуля, если их ещё нет
 Base.metadata.create_all(bind=engine)
